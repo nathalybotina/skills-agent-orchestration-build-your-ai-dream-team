@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="page-header">
+      <p class="eyebrow">Team visibility</p>
+      <h1>Project Pulse</h1>
+      <p>Keep contributors aligned on ownership, momentum, and priorities.</p>
+    </header>
+
+    <main>
+      <section aria-labelledby="projects-heading">
+        <div class="section-heading">
+          <h2 id="projects-heading">Projects</h2>
+          <p id="project-count" aria-live="polite"></p>
+        </div>
+        <div id="dashboard" class="dashboard" aria-live="polite" aria-busy="true">
+          <p id="loading-state" role="status">Loading projects…</p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var dashboard = document.getElementById("dashboard");
+        var projectCount = document.getElementById("project-count");
+        var requiredFields = ["name", "owner", "status", "recentActivity", "priority"];
+
+        function showMessage(message, role) {
+          dashboard.replaceChildren();
+          var messageElement = document.createElement("p");
+          messageElement.setAttribute("role", role || "status");
+          messageElement.textContent = message;
+          dashboard.appendChild(messageElement);
+          dashboard.setAttribute("aria-busy", "false");
+          projectCount.textContent = "";
+        }
+
+        function createDetail(label, value) {
+          var detail = document.createElement("div");
+          var labelElement = document.createElement("dt");
+          var valueElement = document.createElement("dd");
+          labelElement.textContent = label;
+          valueElement.textContent = value;
+          detail.append(labelElement, valueElement);
+          return detail;
+        }
+
+        function createProjectCard(project) {
+          var card = document.createElement("article");
+          card.className = "project-card";
+
+          var heading = document.createElement("h3");
+          heading.textContent = project.name;
+
+          var summary = document.createElement("p");
+          summary.textContent = project.summary || "No summary provided.";
+
+          var details = document.createElement("dl");
+          details.append(
+            createDetail("Owner", project.owner),
+            createDetail("Status", project.status),
+            createDetail("Recent activity", project.recentActivity),
+            createDetail("Priority", project.priority)
+          );
+          card.append(heading, summary, details);
+          return card;
+        }
+
+        function renderProjects(payload) {
+          if (!payload || !Array.isArray(payload.projects)) {
+            throw new Error("Project data must contain a projects array.");
+          }
+          if (payload.projects.length === 0) {
+            showMessage("No projects are available yet.");
+            return;
+          }
+
+          var validProjects = payload.projects.filter(function (project) {
+            return project && requiredFields.every(function (field) {
+              return typeof project[field] === "string" && project[field].trim().length > 0;
+            });
+          });
+          if (validProjects.length === 0) {
+            showMessage("Project data is available, but no complete projects can be displayed.", "alert");
+            return;
+          }
+
+          dashboard.replaceChildren();
+          validProjects.forEach(function (project) {
+            dashboard.appendChild(createProjectCard(project));
+          });
+          projectCount.textContent = validProjects.length + (validProjects.length === 1 ? " project" : " projects");
+          dashboard.setAttribute("aria-busy", "false");
+        }
+
+        fetch("project-data.json")
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("Project data could not be loaded.");
+            }
+            return response.json();
+          })
+          .then(renderProjects)
+          .catch(function () {
+            showMessage("We couldn’t load the project data. Please try again later.", "alert");
+          });
+      }());
+    </script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "name": "Contributor Onboarding",
+      "owner": "Mona Patel",
+      "status": "Active",
+      "recentActivity": "Published the updated first-week checklist.",
+      "priority": "High",
+      "summary": "Make it easier for new contributors to find their first meaningful task."
+    },
+    {
+      "name": "Design System Refresh",
+      "owner": "Jordan Lee",
+      "status": "At Risk",
+      "recentActivity": "Audited form controls and logged three accessibility gaps.",
+      "priority": "High",
+      "summary": "Bring shared interface patterns into one accessible, documented system."
+    },
+    {
+      "name": "Release Notes Hub",
+      "owner": "Avery Chen",
+      "status": "In Review",
+      "recentActivity": "Drafted the v2.4 notes and requested product feedback.",
+      "priority": "Medium",
+      "summary": "Give contributors a clear, searchable view of what changed in each release."
+    },
+    {
+      "name": "Archive Cleanup",
+      "owner": "Sam Rivera",
+      "status": "Complete",
+      "recentActivity": "Moved 48 outdated guides into the reviewed archive.",
+      "priority": "Low",
+      "summary": "Reduce outdated guidance so contributors can trust what they find."
+    }
+  ]
+}
